@@ -1,55 +1,62 @@
-import React,{Component } from 'react';
-import {View,Text } from  'react-native';
-import firebase from 'firebase';
-import  CustomButton from "./common/CustomButton";
-import Card from "./common/Card";
-import CardSection from "./common/CardSection";
-import  Input  from "./common/Input";
-import  Spinner from "./common/Spinner";
-import {connect} from "react-redux";
-import {emailChanged} from '../actions';
-class LoginForm extends Component{
-    
-    onEmailChange(text)
-    {
-    this.PaymentResponse.emailChanged(text);
-}
-    
-    render(){
-    return(
-        <Card>
-            <CardSection>
-     
-   
-            <Input
-    
-    placeholder="user@email.com"
-    label="Email: "
-    
-    onChangeText={this.onEmailChange.bind(this)}
-    />
-    </CardSection>
-    <CardSection>
-   <Input
-    placeholder="password"
-    label="Password"
-    />
-    </CardSection>
-    
+import React, { Component } from "react";
+//import { Text } from "react-native";
+//import firebase from "firebase";
+import { CustomButton, Card, CardSection, Input, Spinner } from "./common";
+import { emailChanged , passwordChanged, loginUser} from "../actions"
+import { connect } from "react-redux";
+import {Alert} from "react-native";
+import Router from "../Router"
 
-    <CardSection>
-        <CustomButton>Sign In</CustomButton>
-    </CardSection>
-    </Card> 
-    );
-}
-}
-const styles = {
-    errorTextStyle: {
-    fontSize: 20,
-    alignSelf: "center",
-    color: "red"
+//import { PASSWORD_CHANGED } from "../actions/types";
+//class LoginForm extends Component {
+  //code is edited when error occured....  
+ // onEmailChange(text){
+//emailChanged(text);
+   // }
+
+   
+class LoginForm extends Component {
+  onEmailChange(text){
+  this.props.emailChanged(text);
+//lert.alert(text+" and password is")
+
+  }
+
+    onPasswordChange(text){
+    this.props.passwordChanged(text);
     }
-    };
-    
-export default connect(null,emailChanged) (LoginForm);
+
+    onLoginUser(email,password){
+     
+      console.log("Your Email is"+email+" "+password)
+      this.props.loginUser(email,password);
+ } 
+  render() {
+    return (
+      <Card>
+        <CardSection>
+          <Input autoCorrect placeholder="user@gmail.com" label="Email: "
+          onChangeText={this.onEmailChange.bind(this)}  value={this.props.email}/>
+        </CardSection>
+        <CardSection>
+          <Input secureTextEntry placeholder="password" label="password" value={this.props.password}  onChangeText={this.onPasswordChange.bind(this)}   />
+        </CardSection>
+        <CardSection>
+          <CustomButton onPress={() => this.onLoginUser(this.props.email,this.props.password)}> Login</CustomButton>
+        </CardSection>
+      </Card>
+                  
+
+    );
+  }
+}
+const mapStateToProps = state => {
+  return {
+  email: state.auth.email,
+  password: state.auth.password
+  };
+  };
+
+  export default connect(
+    mapStateToProps,
+    { emailChanged, passwordChanged, loginUser } )(LoginForm);
